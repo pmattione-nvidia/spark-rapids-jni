@@ -208,6 +208,7 @@ add_library(
   src/NumberConverterJni.cpp
   src/ParseURIJni.cpp
   src/RegexRewriteUtilsJni.cpp
+  src/RollupJni.cpp
   src/RowConversionJni.cpp
   src/SparkResourceAdaptorJni.cpp
   src/StringUtilsJni.cpp
@@ -255,6 +256,7 @@ add_library(
   src/number_converter.cu
   src/parse_uri.cu
   src/regex_rewrite_utils.cu
+  src/rollup.cu
   src/row_conversion.cu
   src/round_float.cu
   src/shuffle_assemble.cu
@@ -290,6 +292,7 @@ target_compile_options(
 target_include_directories(
   spark_rapids_jni
   PRIVATE "${SPARK_RAPIDS_JNI_SOURCE_DIR}/src"
+          "${CUDF_DIR}/cpp/src/groupby"
           "${JNI_INCLUDE_DIRS}"
           "${CUDFJNI_INCLUDE_DIRS}"
           "${CUDAToolkit_INCLUDE_DIRS}"

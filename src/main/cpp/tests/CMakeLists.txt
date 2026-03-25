@@ -127,3 +127,6 @@ ConfigureTest(CONV
 
 ConfigureTest(MULTIPLY
     multiply.cpp)
+
+ConfigureTest(ROLLUP
+    rollup.cpp)
