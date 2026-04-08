@@ -29,18 +29,18 @@
 
 extern "C" {
 
-JNIEXPORT jlongArray JNICALL Java_ai_rapids_cudf_GroupByRollup_nativeRollup(
-  JNIEnv* env,
-  jclass,
-  jlong j_input_table,
-  jintArray j_key_indices,
-  jintArray j_rolled_up_among_keys,
-  jintArray j_agg_column_indexes,
-  jlongArray j_agg_instances,
-  jboolean j_ignore_null_keys,
-  jboolean j_key_sorted,
-  jbooleanArray j_keys_sort_desc,
-  jbooleanArray j_keys_null_first)
+JNIEXPORT jlongArray JNICALL
+Java_ai_rapids_cudf_GroupByRollup_nativeRollup(JNIEnv* env,
+                                               jclass,
+                                               jlong j_input_table,
+                                               jintArray j_key_indices,
+                                               jintArray j_rolled_up_among_keys,
+                                               jintArray j_agg_column_indexes,
+                                               jlongArray j_agg_instances,
+                                               jboolean j_ignore_null_keys,
+                                               jboolean j_key_sorted,
+                                               jbooleanArray j_keys_sort_desc,
+                                               jbooleanArray j_keys_null_first)
 {
   JNI_NULL_CHECK(env, j_input_table, "input table is null", nullptr);
   JNI_NULL_CHECK(env, j_key_indices, "key indices are null", nullptr);
@@ -72,12 +72,12 @@ JNIEXPORT jlongArray JNICALL Java_ai_rapids_cudf_GroupByRollup_nativeRollup(
 
     std::vector<cudf::size_type> rolled_indices(n_rolled.begin(), n_rolled.end());
 
-    cudf::groupby::groupby gb(n_keys_table,
-                              j_ignore_null_keys ? cudf::null_policy::EXCLUDE
-                                                 : cudf::null_policy::INCLUDE,
-                              cudf::sorted::NO,
-                              {},
-                              {});
+    cudf::groupby::groupby gb(
+      n_keys_table,
+      j_ignore_null_keys ? cudf::null_policy::EXCLUDE : cudf::null_policy::INCLUDE,
+      cudf::sorted::NO,
+      {},
+      {});
 
     std::vector<cudf::groupby::aggregation_request> requests;
     int previous_index = -1;
@@ -101,17 +101,16 @@ JNIEXPORT jlongArray JNICALL Java_ai_rapids_cudf_GroupByRollup_nativeRollup(
       previous_index = col_index;
     }
 
-    auto result = gb.rollup(rolled_indices,
-                            cudf::host_span<cudf::groupby::aggregation_request const>(
-                              requests.data(), requests.size()));
+    auto result = gb.rollup(
+      rolled_indices,
+      cudf::host_span<cudf::groupby::aggregation_request const>(requests.data(), requests.size()));
 
     std::vector<std::unique_ptr<cudf::column>> result_columns;
     int agg_result_size = static_cast<int>(result.second.size());
     for (int agg_result_index = 0; agg_result_index < agg_result_size; agg_result_index++) {
       int col_agg_size = static_cast<int>(result.second[agg_result_index].results.size());
       for (int col_agg_index = 0; col_agg_index < col_agg_size; col_agg_index++) {
-        result_columns.push_back(
-          std::move(result.second[agg_result_index].results[col_agg_index]));
+        result_columns.push_back(std::move(result.second[agg_result_index].results[col_agg_index]));
       }
     }
     return cudf::jni::convert_table_for_return(env, result.first, std::move(result_columns));
