@@ -209,6 +209,7 @@ add_library(
   src/ParseURIJni.cpp
   src/ProtobufJni.cpp
   src/RegexRewriteUtilsJni.cpp
+  src/GroupByRollupJni.cpp
   src/RowConversionJni.cpp
   src/SparkResourceAdaptorJni.cpp
   src/StringUtilsJni.cpp
